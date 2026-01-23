@@ -1,5 +1,5 @@
 # Tux-Labs
-##Interactive Linux Learning Environment
+Interactive Linux Learning Environment
 
 ### Project Overview
 
