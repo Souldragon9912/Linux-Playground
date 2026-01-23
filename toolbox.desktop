@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+[Desktop Entry]
+Type=Application
+Name=Tool-box
+Exec=/$HOME/Downloads/tux-labs/.Bash-files/toolbox.sh
+Icon=applications-utilities
+Terminal=true

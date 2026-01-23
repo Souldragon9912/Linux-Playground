@@ -1,0 +1,9 @@
+#!/usr/bin/env
+[Desktop Entry]
+Type=Application
+Name=man-pages
+Exec=/path/to/man-page.sh
+Icon=/path/to/icons/folder
+Terminal=true
+
+# do not remove this comment field. this is here to prevent xdg from editing the file.
