@@ -1,4 +1,4 @@
-![Tux Labs Banner](assets/TUX-LABS.png)
+![Tux Labs Banner](TUX-LABS.png)
 
 ### Project Overview
 
