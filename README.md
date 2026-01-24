@@ -1,5 +1,4 @@
-# Tux-Labs
-Interactive Linux Learning Environment
+![Tux Labs Banner](assets/tux-labs-banner.png)
 
 ### Project Overview
 
