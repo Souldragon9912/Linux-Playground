@@ -1,4 +1,4 @@
-![Tux Labs Banner](STH Logos (5).png)
+![Linux-Playground Banner](STH Logos (5).png)
 
 ### Project Overview
 
