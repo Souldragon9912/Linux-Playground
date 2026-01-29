@@ -1,4 +1,4 @@
-![Linux Playground Banner](images/Linux-playground.png)
+![Linux Playground Banner](Linux-playground.png)
 
 ### Project Overview
 
