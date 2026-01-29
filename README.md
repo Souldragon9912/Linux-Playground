@@ -1,4 +1,4 @@
-![Linux-Playground Banner](STH Logos (5).png)
+![Linux Playground Banner](images/STH%20Logos%20(5).jpg)
 
 ### Project Overview
 
