@@ -1,4 +1,4 @@
-![Tux Labs Banner](TUX-LABS.png)
+![Tux Labs Banner](STH Logos (5).png)
 
 ### Project Overview
 
