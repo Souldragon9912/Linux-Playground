@@ -2,13 +2,13 @@
 
 ### Project Overview
 
-Tux Labs is a beginner-focused, interactive Linux training environment built entirely with Bash scripting. The project is designed to simulate real-world Linux labs in a safe, guided, and educational way, allowing new users to learn essential command-line skills without risking damage to their system.
+Linux Playground is a beginner-focused, interactive Linux training environment built entirely with Bash scripting. The project is designed to simulate real-world Linux labs in a safe, guided, and educational way, allowing new users to learn essential command-line skills without risking damage to their system.
 
 Instead of simply telling users what commands to run, Tux Labs teaches users why, when, and how to use them by combining guided prompts, simulated outputs, and hands-on exercises that mirror professional training platforms such as TestOut and Linux Pro.
 
-## 🧪 How Tux Labs Works
+## 🧪 How Linux Playground Works
 
-Tux Labs operates through a central hub script that launches a menu-driven interface. From there, users can select different learning modules, such as:
+Linux Playground operates through a central hub script that launches a menu-driven interface. From there, users can select different learning modules, such as:
 
 ## System updates
 File management
