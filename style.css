@@ -1,0 +1,40 @@
+.terminal-container {
+    background: #000;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    margin: 40px auto;
+    max-width: 800px;
+    overflow: hidden;
+    text-align: left;
+}
+
+.terminal-header {
+    background: #333;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.dot { height: 12px; width: 12px; border-radius: 50%; margin-right: 8px; }
+.red { background: #ff5f56; }
+.yellow { background: #ffbd2e; }
+.green { background: #27c93f; }
+
+#terminal-body {
+    height: 300px;
+    padding: 15px;
+    font-family: 'Courier New', monospace;
+    color: #2ecc71;
+    overflow-y: auto;
+}
+
+.input-line { display: flex; align-items: center; }
+#command-input {
+    background: transparent;
+    border: none;
+    color: #fff;
+    outline: none;
+    flex: 1;
+    margin-left: 10px;
+    font-family: inherit;
+}
