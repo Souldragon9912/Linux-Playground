@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux Playground</title>
+    <style>
+        :root {
+            --term-bg: #0c0c0c;
+            --term-text: #33ff00;
+            --ui-bg: #1a1a1a;
+            --ui-text: #e0e0e0;
+            --accent: #33ff00;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--term-bg);
+            color: var(--term-text);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- UI Header --- */
+        header {
+            background: var(--ui-bg);
+            color: var(--ui-text);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .logo { font-weight: bold; font-size: 1.5rem; letter-spacing: 2px; }
+        
+        nav a {
+            color: var(--ui-text);
+            text-decoration: none;
+            margin-left: 20px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        nav a:hover, nav a.active { color: var(--accent); text-decoration: underline; }
+
+        /* --- Main Layout --- */
+        .container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 60px);
+        }
+
+        /* --- Main Content Area --- */
+        main {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            background: #111;
+            display: none; /* Hidden by default, shown via JS */
+            color: white;
+            font-family: sans-serif;
+        }
+
+        main.active { display: block; }
+
+        h1 { border-bottom: 1px solid #333; padding-bottom: 10px; color: var(--accent); }
+        .card {
+            background: #222;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+        }
+        .btn {
+            background: var(--accent);
+            color: black;
+            padding: 10px 20px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* --- Terminal Section --- */
+        #terminal-container {
+            flex: 1;
+            padding: 20px;
+            background-color: var(--term-bg);
+            overflow-y: auto;
+            display: none; /* Toggled */
+            font-size: 1.1rem;
+        }
+        #terminal-container.active { display: block; }
+
+        .output-line { margin-bottom: 5px; white-space: pre-wrap; }
+        .prompt-line { display: flex; }
+        .prompt { color: var(--accent); margin-right: 10px; }
+        #cmd-input {
+            background: transparent;
+            border: none;
+            color: var(--term-text);
+            font-family: inherit;
+            font-size: inherit;
+            flex: 1;
+            outline: none;
+        }
+
+        /* --- User Status --- */
+        #user-status {
+            font-size: 0.9rem;
+            color: #888;
+        }
+        .badge {
+            background: #333;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--accent);
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">./LINUX_PLAYGROUND</div>
+        <nav>
+            <a onclick="app.nav('terminal')" class="active">Terminal</a>
+            <a onclick="app.nav('releases')">Releases</a>
+            <a onclick="app.nav('announcements')">News</a>
+            <a onclick="app.nav('about')">About</a>
+            <a onclick="app.nav('login')" id="nav-login">Login</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        
+        <div id="terminal-container" class="active" onclick="document.getElementById('cmd-input').focus()">
+            <div class="output-line">Welcome to Linux Playground OS v1.0</div>
+            <div class="output-line">Type 'help' for available commands.</div>
+            <div class="output-line">-----------------------------------</div>
+            <div id="terminal-output"></div>
+            <div class="prompt-line">
+                <span class="prompt" id="prompt-user">guest@playground:~$</span>
+                <input type="text" id="cmd-input" autocomplete="off" autofocus>
+            </div>
+        </div>
+
+        <main id="page-releases">
+            <h1>Downloads & Labs</h1>
+            <p>Access the full releases of Linux Playground tools.</p>
+            
+            <div class="card">
+                <h3>Lab 01: Bash Basics</h3>
+                <p>Learn the file system navigation.</p>
+                <div id="lab1-lock">🔒 Locked (Login required)</div>
+                <button class="btn" id="lab1-btn" style="display:none" onclick="app.download('Lab 01')">Download Lab</button>
+            </div>
+
+            <div class="card">
+                <h3>Lab 02: Permissions</h3>
+                <p>Understanding chmod and chown.</p>
+                <div id="lab2-lock">🔒 Locked (Complete Lab 01 first)</div>
+                <button class="btn" id="lab2-btn" style="display:none">Download Lab</button>
+            </div>
+        </main>
+
+        <main id="page-announcements">
+            <h1>System Announcements</h1>
+            <div class="card">
+                <small>2026-05-12</small>
+                <h3>Beta Launch Live</h3>
+                <p>We have officially launched the terminal simulation. Try running 'neofetch'!</p>
+            </div>
+            <div class="card">
+                <small>2026-04-01</small>
+                <h3>New Python Tools</h3>
+                <p>Added python emulation to the web shell.</p>
+            </div>
+        </main>
+
+        <main id="page-about">
+            <h1>About Us</h1>
+            <p>Linux Playground is an open source initiative to help students learn the CLI.</p>
+            <h3>Credits</h3>
+            <ul>
+                <li><strong>Lead Dev:</strong> [Your Name]</li>
+                <li><strong>Design:</strong> CSS Grid & Flexbox</li>
+                <li><strong>Engine:</strong> Vanilla JS</li>
+            </ul>
+        </main>
+
+        <main id="page-login">
+            <h1>User Login</h1>
+            <div class="card">
+                <p>Enter your username to access save points.</p>
+                <input type="text" id="username-input" placeholder="Username" style="padding: 10px; width: 100%; margin-bottom: 10px;">
+                <button class="btn" onclick="app.login()">Login / Register</button>
+            </div>
+            
+            <div class="card">
+                <h3>Lab Completion Code</h3>
+                <p>Enter a code from a finished lab to unlock the next level.</p>
+                <input type="text" id="lab-code" placeholder="Ex: SUDO-123" style="padding: 10px; width: 100%; margin-bottom: 10px;">
+                <button class="btn" onclick="app.submitCode()">Submit Code</button>
+            </div>
+
+            <div id="admin-panel" style="display:none; border: 1px solid red; padding: 20px; margin-top: 20px;">
+                <h3 style="color: red">ADMIN PANEL</h3>
+                <p>Create Announcement:</p>
+                <input type="text" id="admin-anno-title" placeholder="Title" style="width: 100%; padding: 5px; margin-bottom: 5px;">
+                <textarea id="admin-anno-body" placeholder="Body" style="width: 100%; padding: 5px;"></textarea>
+                <button class="btn" style="background: red; color: white;" onclick="app.postAnnouncement()">Post to Site</button>
+            </div>
+        </main>
+
+    </div>
+
+<script>
+const app = (() => {
+    // --- STATE ---
+    let user = localStorage.getItem('lp_user') || 'guest';
+    let unlockedLabs = JSON.parse(localStorage.getItem('lp_labs')) || [];
+    let announcements = JSON.parse(localStorage.getItem('lp_news')) || [];
+
+    // --- INIT ---
+    const init = () => {
+        updateAuthUI();
+        renderAnnouncements();
+        
+        // Terminal Listener
+        document.getElementById('cmd-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                processCommand(this.value);
+                this.value = '';
+            }
+        });
+    };
+
+    // --- NAVIGATION ---
+    const nav = (pageId) => {
+        // Hide all pages
+        document.querySelectorAll('main, #terminal-container').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('nav a').forEach(el => el.classList.remove('active'));
+
+        // Show selected
+        if(pageId === 'terminal') {
+            document.getElementById('terminal-container').classList.add('active');
+            setTimeout(() => document.getElementById('cmd-input').focus(), 100);
+        } else {
+            document.getElementById('page-' + pageId).classList.add('active');
+        }
+        
+        // Highlight Nav
+        event.target.classList.add('active');
+    };
+
+    // --- TERMINAL LOGIC ---
+    const processCommand = (cmd) => {
+        const output = document.getElementById('terminal-output');
+        const cleanCmd = cmd.trim().toLowerCase();
+        
+        // Print command to history
+        output.innerHTML += `<div class="output-line"><span style="color:#33ff00">${user}@playground:~$</span> ${cmd}</div>`;
+
+        let response = "";
+
+        // Command Switch
+        switch(cleanCmd) {
+            case 'help':
+                response = "Available commands: help, clear, login [name], whoami, labs, neofetch";
+                break;
+            case 'clear':
+                output.innerHTML = '';
+                return;
+            case 'whoami':
+                response = user;
+                break;
+            case 'neofetch':
+                response = `
+       .           User: ${user}
+      / \\          OS: Linux Playground Web
+     /   \\         Uptime: Forever
+    /_____\\        Shell: JS-Bash
+   /       \\       Labs Unlocked: ${unlockedLabs.length}
+  /_________\\      
+`;
+                break;
+            case 'labs':
+                response = "Available Labs: Bash Basics, Permissions, Network.";
+                break;
+            default:
+                if (cleanCmd.startsWith('login ')) {
+                    const newName = cmd.split(' ')[1];
+                    if(newName) {
+                        handleLogin(newName);
+                        response = `Logged in as ${newName}`;
+                    } else {
+                        response = "Usage: login [username]";
+                    }
+                } else {
+                    response = `bash: ${cmd}: command not found`;
+                }
+        }
+
+        if(response) {
+            output.innerHTML += `<div class="output-line">${response}</div>`;
+        }
+        
+        // Scroll to bottom
+        document.getElementById('terminal-container').scrollTop = document.getElementById('terminal-container').scrollHeight;
+    };
+
+    // --- AUTH & SAVES ---
+    const handleLogin = (username) => {
+        user = username;
+        localStorage.setItem('lp_user', user);
+        updateAuthUI();
+        if(user === 'admin') {
+            document.getElementById('admin-panel').style.display = 'block';
+            alert("Admin Mode Activated");
+        } else {
+            document.getElementById('admin-panel').style.display = 'none';
+        }
+    };
+
+    const login = () => {
+        const input = document.getElementById('username-input').value;
+        if(input) handleLogin(input);
+    };
+
+    const updateAuthUI = () => {
+        document.getElementById('prompt-user').innerText = `${user}@playground:~$`;
+        document.getElementById('nav-login').innerText = user === 'guest' ? 'Login' : `User: ${user}`;
+        
+        // Unlock Labs logic
+        if(user !== 'guest') {
+            document.getElementById('lab1-lock').style.display = 'none';
+            document.getElementById('lab1-btn').style.display = 'block';
+        }
+        
+        // Check for specific lab unlocks
+        if(unlockedLabs.includes('LAB1_COMPLETE')) {
+            document.getElementById('lab2-lock').style.display = 'none';
+            document.getElementById('lab2-btn').style.display = 'block';
+        }
+    };
+
+    // --- LAB COMPLETION CODES ---
+    const submitCode = () => {
+        const code = document.getElementById('lab-code').value;
+        if(code === 'BASH-MASTER') {
+            alert("Code Accepted! Lab 02 Unlocked.");
+            unlockedLabs.push('LAB1_COMPLETE');
+            localStorage.setItem('lp_labs', JSON.stringify(unlockedLabs));
+            updateAuthUI();
+        } else {
+            alert("Invalid Code.");
+        }
+    };
+
+    const download = (filename) => {
+        alert(`Downloading ${filename}... (Simulation)`);
+    };
+
+    // --- ADMIN ---
+    const postAnnouncement = () => {
+        const title = document.getElementById('admin-anno-title').value;
+        const body = document.getElementById('admin-anno-body').value;
+        
+        if(title && body) {
+            const newPost = { date: new Date().toISOString().split('T')[0], title, body };
+            announcements.unshift(newPost); // Add to top
+            localStorage.setItem('lp_news', JSON.stringify(announcements));
+            renderAnnouncements();
+            alert("Posted!");
+        }
+    };
+
+    const renderAnnouncements = () => {
+        const container = document.getElementById('page-announcements');
+        // Keep the header, remove old dynamic cards
+        const staticContent = container.innerHTML.split('<div class="dynamic-post">')[0];
+        
+        let html = '';
+        announcements.forEach(post => {
+            html += `
+            <div class="card dynamic-post">
+                <small>${post.date}</small>
+                <h3>${post.title}</h3>
+                <p>${post.body}</p>
+            </div>`;
+        });
+        
+        // Just appending simply for this demo
+        if(announcements.length > 0) {
+             // In a real app we'd manage DOM better, but this works for a playground
+             const header = container.querySelector('h1');
+             // Reset
+             container.innerHTML = '';
+             container.appendChild(header);
+             container.innerHTML += html;
+        }
+    };
+
+    return { init, nav, login, submitCode, download, postAnnouncement };
+})();
+
+// Start
+app.init();
+</script>
+</body>
+</html>
