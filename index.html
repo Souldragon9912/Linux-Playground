@@ -254,7 +254,7 @@
             </div>
         </section>
 
-        <section id="section-terminal">
+    <section id="section-terminal">
             <div class="terminal-window">
                 <div class="terminal-header">
                     <div class="dot red"></div>
@@ -262,10 +262,12 @@
                     <div class="dot green"></div>
                     <span style="margin-left: 10px; font-size: 0.9rem; color: #aaa;">guest@linux-playground:~</span>
                 </div>
-                <div class="terminal-body" id="term-body" onclick="document.getElementById('cmd-input').focus()">
-                    <div style="margin-bottom: 10px;">
-                        <span style="color: var(--accent-green)">Welcome to Linux Playground OS v3.0</span><br>
-                        Type 'help' to start.<br>
+                <div class="terminal-body" onclick="document.getElementById('cmd-input').focus()">
+                    <div id="term-history">
+                        <div style="margin-bottom: 10px;">
+                            <span style="color: var(--accent-green)">Welcome to Linux Playground OS v3.0</span><br>
+                            Type 'help' to start.<br>
+                        </div>
                     </div>
                     <div style="display: flex;">
                         <span id="term-prompt" style="color: var(--accent-blue); margin-right: 10px;">guest@linux:~$</span>
@@ -274,7 +276,7 @@
                 </div>
             </div>
         </section>
-
+        
         <section id="section-labs">
             <h1>Labs & Tools</h1>
             <button id="btn-add-lab" class="btn" style="display:none; margin-bottom:20px" onclick="app.showUpload()">+ Upload Lab (Admin)</button>
@@ -451,15 +453,17 @@ const app = (() => {
 
     // Terminal Logic
     const runCmd = (cmd) => {
-        const out = document.getElementById('term-body');
+        const history = document.getElementById('term-history'); // Target the history container
         const p = `${state.user}@linux:~$`;
-        out.innerHTML += `<div><span style="color:#0099ff">${p}</span> ${cmd}</div>`;
+        
+        // Add the user's command to history
+        history.innerHTML += `<div><span style="color:#0099ff">${p}</span> ${cmd}</div>`;
         
         const c = cmd.trim().split(' ');
         let r = '';
         
         if(c[0] === 'help') r = "Available: help, clear, ls, whoami, login [name]";
-        else if(c[0] === 'clear') { out.innerHTML = ''; return; }
+        else if(c[0] === 'clear') { history.innerHTML = ''; return; } // Clear history only
         else if(c[0] === 'ls') r = "Documents  Downloads  lab01.zip";
         else if(c[0] === 'whoami') r = state.user + (state.isAdmin ? " (Root Access)" : "");
         else if(c[0] === 'login') {
@@ -472,8 +476,11 @@ const app = (() => {
         }
         else r = `bash: ${c[0]}: command not found`;
         
-        if(r) out.innerHTML += `<div style="color:#ccc; margin-bottom:10px">${r}</div>`;
-        out.scrollTop = out.scrollHeight;
+        if(r) history.innerHTML += `<div style="color:#ccc; margin-bottom:10px">${r}</div>`;
+        
+        // Scroll the parent container
+        const body = document.querySelector('.terminal-body');
+        body.scrollTop = body.scrollHeight;
     };
 
     // Admin Functions
