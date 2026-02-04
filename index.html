@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            /* Theme Colors based on your artwork */
+            /* Cartoon Theme Colors */
             --glass-bg: rgba(20, 25, 40, 0.90);
             --glass-border: rgba(255, 255, 255, 0.1);
             --text-main: #ffffff;
@@ -23,7 +23,7 @@
             margin: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             /* BACKGROUND IMAGE */
-            background: url('Main-screen.png') no-repeat center center fixed; 
+            background: url('STH%20Logos%20(6).jpg') no-repeat center center fixed; 
             background-size: cover;
             color: var(--text-main);
             display: flex;
@@ -46,7 +46,7 @@
         .brand-banner {
             width: 100%;
             height: 140px;
-            /* BANNER LOGO IMAGE */
+            /* BANNER IMAGE */
             background: url('Linux-playground.jpg') no-repeat center;
             background-size: cover;
             border-bottom: 1px solid var(--glass-border);
@@ -93,7 +93,7 @@
             flex: 1;
             position: relative;
             overflow: hidden;
-            background: rgba(0, 0, 0, 0.4); /* Dark overlay for readability */
+            background: rgba(0, 0, 0, 0.4);
         }
 
         section {
@@ -131,6 +131,7 @@
             border: 1px solid var(--glass-border);
             transition: all 0.3s ease;
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            position: relative; /* Needed for delete button positioning */
         }
         .card:hover { 
             transform: translateY(-5px) scale(1.02); 
@@ -138,7 +139,7 @@
             box-shadow: 0 15px 40px rgba(85, 170, 34, 0.2);
         }
         
-        .card h3 { margin-top: 0; color: var(--accent-blue); font-size: 1.4rem; }
+        .card h3 { margin-top: 0; color: var(--accent-blue); font-size: 1.4rem; padding-right: 30px; }
         .card small { color: var(--text-muted); display: block; margin-bottom: 15px; font-size: 0.9rem; }
 
         /* Buttons */
@@ -198,6 +199,7 @@
             color: #ccc;
             overflow-y: auto;
             font-size: 1.1rem;
+            cursor: text;
         }
         .cmd-input { background: transparent; border: none; color: white; outline: none; font-family: inherit; font-size: inherit; flex: 1; }
 
@@ -233,7 +235,7 @@
     <main>
         
         <section id="section-home" class="active">
-            <h1>Welcome to Linux Playground</h1>
+            <h1>Welcome to the Playground</h1>
             <p style="font-size: 1.2rem; max-width: 600px;">
                 Join the penguins! Explore Linux commands, complete labs, and unlock tools in a safe, simulated environment.
             </p>
@@ -245,7 +247,7 @@
                 </div>
                 <div class="card" onclick="app.nav('labs')" style="cursor:pointer">
                     <h3><i class="fa-solid fa-download"></i> Downloads</h3>
-                    <p>Get the latest version of tools and labs.</p>
+                    <p>Get the latest ISOs and scripts.</p>
                 </div>
                 <div class="card">
                     <h3><i class="fa-solid fa-trophy"></i> Your Progress</h3>
@@ -254,7 +256,7 @@
             </div>
         </section>
 
-    <section id="section-terminal">
+        <section id="section-terminal">
             <div class="terminal-window">
                 <div class="terminal-header">
                     <div class="dot red"></div>
@@ -276,7 +278,7 @@
                 </div>
             </div>
         </section>
-        
+
         <section id="section-labs">
             <h1>Labs & Tools</h1>
             <button id="btn-add-lab" class="btn" style="display:none; margin-bottom:20px" onclick="app.showUpload()">+ Upload Lab (Admin)</button>
@@ -320,7 +322,7 @@
                 <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
                 <h3>Credits</h3>
                 <p><strong>Art & Design:</strong> Community Penguin Project</p>
-                <p><strong>Development:</strong> Souldragon</p>
+                <p><strong>Development:</strong> SoulDragon</p>
             </div>
         </section>
     </main>
@@ -345,17 +347,14 @@
     </div>
 
 <script>
-<script>
 const app = (() => {
-    // --- CONFIGURATION ---
-    const ADMIN_PASS = "root"; // Change this if you want a different password
+    const ADMIN_PASS = "Net.codex1598";
 
     // --- STATE ---
     let state = {
         user: localStorage.getItem('lp_user') || 'Guest',
         isAdmin: localStorage.getItem('lp_token') === 'verified_admin',
         
-        // Added IDs to default data so they can be deleted
         labs: JSON.parse(localStorage.getItem('lp_labs')) || [
             { id: 1, title: 'Intro to Bash', date: '2026-05-10', desc: 'Navigating the file system.', link: '#' },
             { id: 2, title: 'Network Tools', date: '2026-05-12', desc: 'Using ping and curl.', link: '#' }
@@ -366,6 +365,22 @@ const app = (() => {
     };
 
     const init = () => {
+        // --- DATA REPAIR (Fixes the "Broken Buttons" issue) ---
+        // If old data exists without IDs, give them IDs now.
+        let needsSave = false;
+        state.labs = state.labs.map((l, i) => {
+            if(!l.id) { needsSave = true; return {...l, id: Date.now() + i}; }
+            return l;
+        });
+        state.news = state.news.map((n, i) => {
+            if(!n.id) { needsSave = true; return {...n, id: Date.now() + i}; }
+            return n;
+        });
+        if(needsSave) {
+            localStorage.setItem('lp_labs', JSON.stringify(state.labs));
+            localStorage.setItem('lp_news', JSON.stringify(state.news));
+        }
+
         refresh();
         document.getElementById('cmd-input').addEventListener('keydown', e => {
             if(e.key === 'Enter') { runCmd(e.target.value); e.target.value = ''; }
@@ -384,7 +399,6 @@ const app = (() => {
     };
 
     const refresh = () => {
-        // Auth UI
         const loginBtn = document.getElementById('nav-login');
         if (state.isAdmin) {
             loginBtn.innerHTML = `<i class="fa-solid fa-user-shield"></i> Admin`;
@@ -397,23 +411,16 @@ const app = (() => {
             loginBtn.style.color = 'inherit';
         }
 
-        // Admin Panels
         document.getElementById('btn-add-lab').style.display = state.isAdmin ? 'inline-block' : 'none';
         document.getElementById('admin-news-panel').style.display = state.isAdmin ? 'block' : 'none';
         
-        // Render Labs (Now with Delete Button)
-        const lc = document.getElementById('labs-grid'); 
-        lc.innerHTML = '';
+        const lc = document.getElementById('labs-grid'); lc.innerHTML = '';
         state.labs.forEach(l => {
-            // Only create the delete button string if Admin
-            const deleteBtn = state.isAdmin ? 
-                `<button onclick="app.deleteLab(${l.id})" style="position:absolute; top:15px; right:15px; background:transparent; border:none; color:#ff5555; cursor:pointer; font-size:1.1rem;" title="Delete Lab">
-                    <i class="fa-solid fa-trash"></i>
-                </button>` : '';
-
+            const delBtn = state.isAdmin ? 
+                `<button onclick="app.deleteLab(${l.id})" style="position:absolute; top:15px; right:15px; background:transparent; border:none; color:#ff5555; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>` : '';
             lc.innerHTML += `
-            <div class="card" style="position:relative">
-                ${deleteBtn}
+            <div class="card">
+                ${delBtn}
                 <h3>${l.title}</h3>
                 <small>${l.date}</small>
                 <p>${l.desc}</p>
@@ -421,19 +428,13 @@ const app = (() => {
             </div>`;
         });
 
-        // Render News (Now with Delete Button)
-        const nc = document.getElementById('news-feed'); 
-        nc.innerHTML = '';
+        const nc = document.getElementById('news-feed'); nc.innerHTML = '';
         state.news.forEach(n => {
-            // Only create the delete button string if Admin
-            const deleteBtn = state.isAdmin ? 
-                `<button onclick="app.deleteNews(${n.id})" style="position:absolute; top:15px; right:15px; background:transparent; border:none; color:#ff5555; cursor:pointer;" title="Delete News">
-                    <i class="fa-solid fa-trash"></i>
-                </button>` : '';
-
+            const delBtn = state.isAdmin ? 
+                `<button onclick="app.deleteNews(${n.id})" style="position:absolute; top:15px; right:15px; background:transparent; border:none; color:#ff5555; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>` : '';
             nc.innerHTML += `
             <div class="card" style="margin-bottom:15px; position:relative;">
-                ${deleteBtn}
+                ${delBtn}
                 <h3>${n.title}</h3>
                 <small>${n.date}</small>
                 <p>${n.body}</p>
@@ -441,93 +442,66 @@ const app = (() => {
         });
     };
 
-    // --- DELETE LOGIC ---
+    // --- ACTIONS ---
+    const login = () => {
+        const u = document.getElementById('login-user').value.trim();
+        if(!u) return;
+        if (u.toLowerCase() === 'admin') {
+            if (prompt("Enter Password:") === ADMIN_PASS) {
+                state.user = 'Admin'; state.isAdmin = true;
+                localStorage.setItem('lp_token', 'verified_admin');
+                alert("Welcome Admin.");
+            } else { alert("Access Denied."); return; }
+        } else {
+            state.user = u; state.isAdmin = false;
+            localStorage.removeItem('lp_token');
+        }
+        localStorage.setItem('lp_user', state.user);
+        refresh(); nav('home');
+    };
+
     const deleteLab = (id) => {
-        if(!confirm("Are you sure you want to delete this Lab?")) return;
-        state.labs = state.labs.filter(lab => lab.id !== id);
+        if(!confirm("Delete this lab?")) return;
+        state.labs = state.labs.filter(l => l.id !== id);
         localStorage.setItem('lp_labs', JSON.stringify(state.labs));
         refresh();
     };
 
     const deleteNews = (id) => {
-        if(!confirm("Are you sure you want to delete this Announcement?")) return;
+        if(!confirm("Delete this news?")) return;
         state.news = state.news.filter(n => n.id !== id);
         localStorage.setItem('lp_news', JSON.stringify(state.news));
         refresh();
     };
 
-    // --- SECURE LOGIN LOGIC ---
-    const login = () => {
-        const u = document.getElementById('login-user').value.trim();
-        if(!u) return;
-
-        if (u.toLowerCase() === 'admin') {
-            const password = prompt("Enter Admin Password:");
-            if (password === ADMIN_PASS) {
-                state.user = 'Admin';
-                state.isAdmin = true;
-                localStorage.setItem('lp_token', 'verified_admin');
-                alert("Access Granted.");
-            } else {
-                alert("Access Denied.");
-                return;
-            }
-        } else {
-            state.user = u;
-            state.isAdmin = false;
-            localStorage.removeItem('lp_token');
-        }
-
-        localStorage.setItem('lp_user', state.user);
-        refresh(); 
-        nav('home');
-    };
-
-    // Terminal Logic
     const runCmd = (cmd) => {
-        const history = document.getElementById('term-body'); // Using term-body as history container
+        const history = document.getElementById('term-history');
         const p = `${state.user}@linux:~$`;
-        
-        // Use insertAdjacentHTML or appendChild to avoid resetting input event listeners
-        const cmdLine = document.createElement('div');
-        cmdLine.innerHTML = `<span style="color:#0099ff">${p}</span> ${cmd}`;
-        history.insertBefore(cmdLine, history.lastElementChild); // Insert before the input line
+        const div = document.createElement('div');
+        div.innerHTML = `<span style="color:#0099ff">${p}</span> ${cmd}`;
+        history.appendChild(div);
         
         const c = cmd.trim().split(' ');
         let r = '';
-        
         if(c[0] === 'help') r = "Available: help, clear, ls, whoami, login [name]";
-        else if(c[0] === 'clear') { 
-            // Clear all children except the last one (which is the input line)
-            while(history.children.length > 1) {
-                history.removeChild(history.firstChild);
-            }
-            return; 
-        }
+        else if(c[0] === 'clear') { history.innerHTML = ''; return; }
         else if(c[0] === 'ls') r = "Documents  Downloads  lab01.zip";
-        else if(c[0] === 'whoami') r = state.user + (state.isAdmin ? " (Root Access)" : "");
+        else if(c[0] === 'whoami') r = state.user + (state.isAdmin ? " (Root)" : "");
         else if(c[0] === 'login') {
-            if(c[1]) { 
-                document.getElementById('login-user').value = c[1]; 
-                login(); 
-                r = "Auth sequence complete."; 
-            }
+            if(c[1]) { document.getElementById('login-user').value = c[1]; login(); r = "Logged in."; }
             else r = "Usage: login [username]";
         }
         else r = `bash: ${c[0]}: command not found`;
         
         if(r) {
-            const respLine = document.createElement('div');
-            respLine.style.color = '#ccc';
-            respLine.style.marginBottom = '10px';
-            respLine.innerText = r;
-            history.insertBefore(respLine, history.lastElementChild);
+            const resp = document.createElement('div');
+            resp.style.color = '#ccc'; resp.style.marginBottom = '10px';
+            resp.innerText = r;
+            history.appendChild(resp);
         }
-        
-        history.scrollTop = history.scrollHeight;
+        document.querySelector('.terminal-body').scrollTop = document.querySelector('.terminal-body').scrollHeight;
     };
 
-    // Admin Functions
     const showUpload = () => document.getElementById('upload-modal').style.display = 'flex';
     const toggleUpType = () => {
         const t = document.getElementById('up-type').value;
@@ -541,7 +515,6 @@ const app = (() => {
         let link = document.getElementById('up-url').value;
         
         const finish = (lnk) => {
-            // Generate a unique ID using Date.now()
             state.labs.unshift({ id: Date.now(), title, desc, link: lnk, date: new Date().toISOString().split('T')[0] });
             localStorage.setItem('lp_labs', JSON.stringify(state.labs));
             refresh(); document.getElementById('upload-modal').style.display = 'none';
@@ -564,8 +537,7 @@ const app = (() => {
             state.news.unshift({ id: Date.now(), title, body, date: new Date().toISOString().split('T')[0] });
             localStorage.setItem('lp_news', JSON.stringify(state.news));
             refresh();
-            document.getElementById('news-title').value = '';
-            document.getElementById('news-body').value = '';
+            document.getElementById('news-title').value = ''; document.getElementById('news-body').value = '';
         }
     };
 
