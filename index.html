@@ -22,8 +22,7 @@
         body {
             margin: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* BACKGROUND IMAGE */
-            background: url('Main-screen.png') no-repeat center center fixed; 
+            background: url('STH%20Logos%20(6).jpg') no-repeat center center fixed; 
             background-size: cover;
             color: var(--text-main);
             display: flex;
@@ -46,7 +45,6 @@
         .brand-banner {
             width: 100%;
             height: 140px;
-            /* BANNER IMAGE */
             background: url('Linux-playground.jpg') no-repeat center;
             background-size: cover;
             border-bottom: 1px solid var(--glass-border);
@@ -131,7 +129,7 @@
             border: 1px solid var(--glass-border);
             transition: all 0.3s ease;
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            position: relative; /* Needed for delete button positioning */
+            position: relative;
         }
         .card:hover { 
             transform: translateY(-5px) scale(1.02); 
@@ -239,6 +237,9 @@
             <p style="font-size: 1.2rem; max-width: 600px;">
                 Join the penguins! Explore Linux commands, complete labs, and unlock tools in a safe, simulated environment.
             </p>
+
+            <div id="home-latest-news" class="card" style="margin-top: 20px; margin-bottom: 20px; border-left: 4px solid var(--accent-blue); display:none;">
+                </div>
             
             <div class="grid">
                 <div class="card" onclick="app.nav('terminal')" style="cursor:pointer">
@@ -365,17 +366,10 @@ const app = (() => {
     };
 
     const init = () => {
-        // --- DATA REPAIR (Fixes the "Broken Buttons" issue) ---
-        // If old data exists without IDs, give them IDs now.
+        // Data Repair
         let needsSave = false;
-        state.labs = state.labs.map((l, i) => {
-            if(!l.id) { needsSave = true; return {...l, id: Date.now() + i}; }
-            return l;
-        });
-        state.news = state.news.map((n, i) => {
-            if(!n.id) { needsSave = true; return {...n, id: Date.now() + i}; }
-            return n;
-        });
+        state.labs = state.labs.map((l, i) => { if(!l.id) { needsSave=true; return {...l, id: Date.now()+i}; } return l; });
+        state.news = state.news.map((n, i) => { if(!n.id) { needsSave=true; return {...n, id: Date.now()+i}; } return n; });
         if(needsSave) {
             localStorage.setItem('lp_labs', JSON.stringify(state.labs));
             localStorage.setItem('lp_news', JSON.stringify(state.news));
@@ -399,6 +393,23 @@ const app = (() => {
     };
 
     const refresh = () => {
+        // --- 1. HOME PAGE LATEST NEWS ---
+        const latest = state.news[0];
+        const homeBox = document.getElementById('home-latest-news');
+        if(latest) {
+            homeBox.style.display = 'block';
+            homeBox.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <h3 style="margin:0; font-size:1.3rem;"><i class="fa-solid fa-bullhorn"></i> Latest: ${latest.title}</h3>
+                    <small style="margin:0">${latest.date}</small>
+                </div>
+                <p style="margin:0; font-size:1.1rem; color:#e0e0e0;">${latest.body}</p>
+            `;
+        } else {
+            homeBox.style.display = 'none';
+        }
+
+        // --- 2. AUTH UI ---
         const loginBtn = document.getElementById('nav-login');
         if (state.isAdmin) {
             loginBtn.innerHTML = `<i class="fa-solid fa-user-shield"></i> Admin`;
@@ -414,6 +425,7 @@ const app = (() => {
         document.getElementById('btn-add-lab').style.display = state.isAdmin ? 'inline-block' : 'none';
         document.getElementById('admin-news-panel').style.display = state.isAdmin ? 'block' : 'none';
         
+        // --- 3. RENDER LABS ---
         const lc = document.getElementById('labs-grid'); lc.innerHTML = '';
         state.labs.forEach(l => {
             const delBtn = state.isAdmin ? 
@@ -428,6 +440,7 @@ const app = (() => {
             </div>`;
         });
 
+        // --- 4. RENDER NEWS ---
         const nc = document.getElementById('news-feed'); nc.innerHTML = '';
         state.news.forEach(n => {
             const delBtn = state.isAdmin ? 
