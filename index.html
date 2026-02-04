@@ -210,8 +210,9 @@
             color: white;
             border-radius: 8px;
             margin-bottom: 10px;
+            font-family: inherit;
         }
-        input:focus { border-color: var(--accent-blue); outline: none; background: rgba(0,0,0,0.5); }
+        input:focus, textarea:focus { border-color: var(--accent-blue); outline: none; background: rgba(0,0,0,0.5); }
 
     </style>
 </head>
@@ -317,13 +318,11 @@
         </section>
 
         <section id="section-about">
-            <div class="card" style="max-width: 800px;">
-                <h1>About Us</h1>
-                <p>Linux Playground is dedicated to making open-source education fun.</p>
-                <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
-                <h3>Credits</h3>
-                <p><strong>Art & Design:</strong> Community Penguin Project</p>
-                <p><strong>Development:</strong> SoulDragon</p>
+            <div class="card" style="max-width: 800px; position:relative;">
+                <div id="about-content"></div>
+                <button id="btn-edit-about" class="btn" style="display:none; margin-top:20px;" onclick="app.openEditAbout()">
+                    <i class="fa-solid fa-pen-to-square"></i> Edit Page
+                </button>
             </div>
         </section>
     </main>
@@ -347,14 +346,37 @@
         </div>
     </div>
 
+    <div id="about-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:100; justify-content:center; align-items:center; backdrop-filter: blur(5px);">
+        <div class="card" style="width: 600px; background: #1e1e1e;">
+            <h2>Edit About Page</h2>
+            <p style="color:#aaa; font-size:0.9rem;">You can use HTML tags here (e.g. &lt;h1&gt;, &lt;p&gt;, &lt;strong&gt;)</p>
+            <textarea id="about-editor" style="height: 300px; font-family: monospace;"></textarea>
+            
+            <div style="text-align:right; margin-top:20px">
+                <button class="btn btn-danger" onclick="document.getElementById('about-modal').style.display='none'">Cancel</button>
+                <button class="btn" onclick="app.saveAbout()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
 <script>
 const app = (() => {
     const ADMIN_PASS = "Net.codex1598";
+    
+    // Default About Content
+    const defaultAbout = `<h1>About Us</h1>
+<p>Linux Playground is dedicated to making open-source education fun.</p>
+<hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
+<h3>Credits</h3>
+<p><strong>Art & Design:</strong> Community Penguin Project</p>
+<p><strong>Development:</strong> SoulDragon</p>`;
 
     // --- STATE ---
     let state = {
         user: localStorage.getItem('lp_user') || 'Guest',
         isAdmin: localStorage.getItem('lp_token') === 'verified_admin',
+        // About Content Logic
+        about: localStorage.getItem('lp_about') || defaultAbout,
         
         labs: JSON.parse(localStorage.getItem('lp_labs')) || [
             { id: 1, title: 'Intro to Bash', date: '2026-05-10', desc: 'Navigating the file system.', link: '#' },
@@ -393,7 +415,7 @@ const app = (() => {
     };
 
     const refresh = () => {
-        // --- 1. HOME PAGE LATEST NEWS ---
+        // 1. Home News
         const latest = state.news[0];
         const homeBox = document.getElementById('home-latest-news');
         if(latest) {
@@ -405,11 +427,9 @@ const app = (() => {
                 </div>
                 <p style="margin:0; font-size:1.1rem; color:#e0e0e0;">${latest.body}</p>
             `;
-        } else {
-            homeBox.style.display = 'none';
-        }
+        } else { homeBox.style.display = 'none'; }
 
-        // --- 2. AUTH UI ---
+        // 2. Auth
         const loginBtn = document.getElementById('nav-login');
         if (state.isAdmin) {
             loginBtn.innerHTML = `<i class="fa-solid fa-user-shield"></i> Admin`;
@@ -425,7 +445,7 @@ const app = (() => {
         document.getElementById('btn-add-lab').style.display = state.isAdmin ? 'inline-block' : 'none';
         document.getElementById('admin-news-panel').style.display = state.isAdmin ? 'block' : 'none';
         
-        // --- 3. RENDER LABS ---
+        // 3. Render Labs
         const lc = document.getElementById('labs-grid'); lc.innerHTML = '';
         state.labs.forEach(l => {
             const delBtn = state.isAdmin ? 
@@ -440,7 +460,7 @@ const app = (() => {
             </div>`;
         });
 
-        // --- 4. RENDER NEWS ---
+        // 4. Render News
         const nc = document.getElementById('news-feed'); nc.innerHTML = '';
         state.news.forEach(n => {
             const delBtn = state.isAdmin ? 
@@ -453,6 +473,10 @@ const app = (() => {
                 <p>${n.body}</p>
             </div>`;
         });
+
+        // 5. Render About
+        document.getElementById('about-content').innerHTML = state.about;
+        document.getElementById('btn-edit-about').style.display = state.isAdmin ? 'inline-block' : 'none';
     };
 
     // --- ACTIONS ---
@@ -554,12 +578,26 @@ const app = (() => {
         }
     };
 
+    // --- NEW: ABOUT PAGE EDITING ---
+    const openEditAbout = () => {
+        document.getElementById('about-editor').value = state.about;
+        document.getElementById('about-modal').style.display = 'flex';
+    };
+
+    const saveAbout = () => {
+        const newContent = document.getElementById('about-editor').value;
+        state.about = newContent;
+        localStorage.setItem('lp_about', newContent);
+        refresh();
+        document.getElementById('about-modal').style.display = 'none';
+    };
+
     const redeem = () => {
         if(document.getElementById('redeem-code').value === 'PENGUIN') alert("Code Valid! +500 XP");
         else alert("Invalid Code");
     };
 
-    return { init, nav, login, runCmd, showUpload, toggleUpType, saveUpload, postNews, redeem, deleteLab, deleteNews };
+    return { init, nav, login, runCmd, showUpload, toggleUpType, saveUpload, postNews, redeem, deleteLab, deleteNews, openEditAbout, saveAbout };
 })();
 
 app.init();
