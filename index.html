@@ -7,13 +7,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            /* Colors extracted from your artwork */
-            --glass-bg: rgba(20, 25, 40, 0.85); /* Dark blue-ish tint */
+            /* Theme Colors based on your artwork */
+            --glass-bg: rgba(20, 25, 40, 0.90);
             --glass-border: rgba(255, 255, 255, 0.1);
             --text-main: #ffffff;
             --text-muted: #b0c4de;
-            --accent-blue: #0099ff; /* Matches the 'Linux' text */
-            --accent-green: #55aa22; /* Matches the grass/leaves */
+            --accent-blue: #0099ff;
+            --accent-green: #55aa22;
             --danger: #ff5555;
         }
 
@@ -22,8 +22,8 @@
         body {
             margin: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* The "Clean" cartoon image as background */
-            background: url('bg.jpg') no-repeat center center fixed; 
+            /* BACKGROUND IMAGE */
+            background: url('Main-screen.png') no-repeat center center fixed; 
             background-size: cover;
             color: var(--text-main);
             display: flex;
@@ -35,7 +35,7 @@
         aside {
             width: 280px;
             background: var(--glass-bg);
-            backdrop-filter: blur(15px); /* heavy blur for readability */
+            backdrop-filter: blur(15px);
             border-right: 1px solid var(--glass-border);
             display: flex;
             flex-direction: column;
@@ -46,14 +46,13 @@
         .brand-banner {
             width: 100%;
             height: 140px;
-            /* The "Text" cartoon image as the logo header */
-            background: url('banner.jpg') no-repeat center;
+            /* BANNER LOGO IMAGE */
+            background: url('Linux-playground.jpg') no-repeat center;
             background-size: cover;
             border-bottom: 1px solid var(--glass-border);
             position: relative;
         }
         
-        /* Gradient overlay to make text below readable */
         .brand-banner::after {
             content: '';
             position: absolute;
@@ -94,8 +93,7 @@
             flex: 1;
             position: relative;
             overflow: hidden;
-            /* Slight overlay on the main area to tone down the busy background */
-            background: rgba(0, 0, 0, 0.2); 
+            background: rgba(0, 0, 0, 0.4); /* Dark overlay for readability */
         }
 
         section {
@@ -113,14 +111,11 @@
         h1 { 
             margin-top: 0; 
             font-size: 2.5rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            /* Gradient Text Effect */
-            background: linear-gradient(to right, #fff, #b0c4de);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            color: white;
         }
 
-        /* --- Cards (Glassmorphism) --- */
+        /* --- Cards --- */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -129,7 +124,7 @@
         }
 
         .card {
-            background: var(--glass-bg);
+            background: rgba(30, 35, 50, 0.85);
             backdrop-filter: blur(10px);
             padding: 25px;
             border-radius: 16px;
@@ -164,7 +159,7 @@
         .btn:hover { transform: scale(1.05); filter: brightness(1.1); }
         .btn-danger { background: var(--danger); box-shadow: none; }
 
-        /* --- Terminal (Window Style) --- */
+        /* --- Terminal Window --- */
         #section-terminal {
             display: none;
             justify-content: center;
@@ -223,7 +218,8 @@
 <body>
 
     <aside>
-        <div class="brand-banner"></div> <nav>
+        <div class="brand-banner"></div> 
+        <nav>
             <button onclick="app.nav('home')" class="active"><i class="fa-solid fa-house"></i> Home</button>
             <button onclick="app.nav('terminal')"><i class="fa-solid fa-terminal"></i> Terminal</button>
             <button onclick="app.nav('labs')"><i class="fa-solid fa-flask"></i> Labs & Tools</button>
@@ -322,7 +318,7 @@
                 <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
                 <h3>Credits</h3>
                 <p><strong>Art & Design:</strong> Community Penguin Project</p>
-                <p><strong>Development:</strong> SoulDragon</p>
+                <p><strong>Development:</strong> Souldragon</p>
             </div>
         </section>
     </main>
@@ -348,9 +344,14 @@
 
 <script>
 const app = (() => {
+    // --- CONFIGURATION ---
+    const ADMIN_PASS = "Net.codex1598"; // CHANGE THIS PASSWORD!
+
+    // --- STATE ---
     let state = {
         user: localStorage.getItem('lp_user') || 'Guest',
-        isAdmin: localStorage.getItem('lp_admin') === 'true',
+        isAdmin: localStorage.getItem('lp_token') === 'verified_admin',
+        
         labs: JSON.parse(localStorage.getItem('lp_labs')) || [
             { title: 'Intro to Bash', date: '2026-05-10', desc: 'Navigating the file system.', link: '#' },
             { title: 'Network Tools', date: '2026-05-12', desc: 'Using ping and curl.', link: '#' }
@@ -371,13 +372,29 @@ const app = (() => {
         document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
         document.getElementById('section-'+id).classList.add('active');
         document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-        // Highlighting logic handled by click, but could be strict here
+        // Find button that calls this func
+        const btns = document.querySelectorAll('nav button');
+        for(let btn of btns) {
+            if(btn.getAttribute('onclick').includes(id)) btn.classList.add('active');
+        }
         if(id === 'terminal') document.getElementById('cmd-input').focus();
     };
 
     const refresh = () => {
         // Auth UI
-        document.getElementById('nav-login').innerHTML = state.user === 'Guest' ? '<i class="fa-solid fa-user"></i> Login' : `<i class="fa-solid fa-user-check"></i> ${state.user}`;
+        const loginBtn = document.getElementById('nav-login');
+        if (state.isAdmin) {
+            loginBtn.innerHTML = `<i class="fa-solid fa-user-shield"></i> Admin`;
+            loginBtn.style.color = '#ff5555'; 
+        } else if (state.user !== 'Guest') {
+            loginBtn.innerHTML = `<i class="fa-solid fa-user-check"></i> ${state.user}`;
+            loginBtn.style.color = '#55aa22';
+        } else {
+            loginBtn.innerHTML = `<i class="fa-solid fa-user"></i> Login`;
+            loginBtn.style.color = 'inherit';
+        }
+
+        // Show/Hide Admin Panels
         document.getElementById('btn-add-lab').style.display = state.isAdmin ? 'inline-block' : 'none';
         document.getElementById('admin-news-panel').style.display = state.isAdmin ? 'block' : 'none';
         
@@ -405,14 +422,31 @@ const app = (() => {
         });
     };
 
+    // --- SECURE LOGIN LOGIC ---
     const login = () => {
-        const u = document.getElementById('login-user').value;
+        const u = document.getElementById('login-user').value.trim();
         if(!u) return;
-        state.user = u;
-        state.isAdmin = u.toLowerCase() === 'admin';
-        localStorage.setItem('lp_user', u);
-        localStorage.setItem('lp_admin', state.isAdmin);
-        refresh(); nav('home');
+
+        if (u.toLowerCase() === 'admin') {
+            const password = prompt("Enter Admin Password:");
+            if (password === ADMIN_PASS) {
+                state.user = 'Admin';
+                state.isAdmin = true;
+                localStorage.setItem('lp_token', 'verified_admin');
+                alert("Access Granted.");
+            } else {
+                alert("Access Denied.");
+                return;
+            }
+        } else {
+            state.user = u;
+            state.isAdmin = false;
+            localStorage.removeItem('lp_token');
+        }
+
+        localStorage.setItem('lp_user', state.user);
+        refresh(); 
+        nav('home');
     };
 
     // Terminal Logic
@@ -427,9 +461,13 @@ const app = (() => {
         if(c[0] === 'help') r = "Available: help, clear, ls, whoami, login [name]";
         else if(c[0] === 'clear') { out.innerHTML = ''; return; }
         else if(c[0] === 'ls') r = "Documents  Downloads  lab01.zip";
-        else if(c[0] === 'whoami') r = state.user;
+        else if(c[0] === 'whoami') r = state.user + (state.isAdmin ? " (Root Access)" : "");
         else if(c[0] === 'login') {
-            if(c[1]) { document.getElementById('login-user').value = c[1]; login(); r = "Logged in via terminal."; }
+            if(c[1]) { 
+                document.getElementById('login-user').value = c[1]; 
+                login(); 
+                r = "Auth sequence complete."; 
+            }
             else r = "Usage: login [username]";
         }
         else r = `bash: ${c[0]}: command not found`;
