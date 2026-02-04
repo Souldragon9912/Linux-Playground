@@ -1,9 +1,0 @@
-#!/usr/bin/env xdg-open
-[Desktop Entry]
-Type=Application
-Name=Bash Tools
-Comment=Beginner-friendly Linux tools
-Exec=bash -c 'DIR="$(cd "$(dirname "$1")" && pwd)"; "$DIR/.Bash-files/Ventoy-interactive.sh"; exec bash' _ %k
-Icon=/path/to/icons/folder
-Terminal=true
-Categories=Utility;
