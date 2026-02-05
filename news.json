@@ -2,25 +2,25 @@
     {
         "id": 1,
         "title": "Welcome to the Playground!",
-        "date": "2026-02-04",
+        "date": "2026-02-02",
         "body": "We have updated the site to load news from a file! No more editing HTML."
     },
     {
         "id": 2,
         "title": "New Command Learning Lab",
-        "date": "2026-02-05",
+        "date": "2026-02-03",
         "body": "Check out the new interactive Bash lesson in the terminal. Type 'learn-commands' to start."
     },
         {
         "id": 3,
         "title": "Ventoy Interactive",
-        "date": "2026-02-05",
+        "date": "2026-02-03",
         "body": "Ventoy is a usb system that allows you to copy and install mulitple OS on a single drive."
     },
         {
         "id": 4,
         "title": "Linux Playground software",
-        "date": "2026-02-05",
+        "date": "2026-02-04",
         "body": "This is the full base release of the program. Remember: start with Terminal Tutor to begin the first lession."
     }
 ]
