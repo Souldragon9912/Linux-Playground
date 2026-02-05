@@ -1,26 +1,30 @@
 [
     {
         "id": 1,
-        "title": "Welcome to the Playground!",
-        "date": "2026-02-04",
-        "body": "We have updated the site to load news from a file! No more editing HTML."
+        "title": "Intro to Bash",
+        "date": "2026-02-02",
+        "desc": "Navigating the file system.",
+        "link": "#"
     },
     {
         "id": 2,
-        "title": "New Command Learning Lab",
-        "date": "2026-02-05",
-        "body": "Check out the new interactive Bash lesson in the terminal. Type 'learn-commands' to start."
+        "title": "Command Learning",
+        "date": "2026-02-03",
+        "desc": "Interactive Bash script lesson.",
+        "link": "system_playground.sh"
     },
     {
         "id": 3,
-        "title": "Our first official release!!",
-        "date": "2026-02-05",
-        "body": "Check out Ventoy interactive."
+        "title": "Ventoy Interactive",
+        "date": "2026-02-04",
+        "desc": "Ventoy is a usb system that allows you to copy and install mulitple OS on a single drive.",
+        "link": "Ventoy_interactive.zip"
     },
     {
         "id": 4,
-        "title": "Linux PLayground's official release!!",
+        "title": "Linux Playground software",
         "date": "2026-02-04",
-        "body": "This is the full base release of Linux Playground. This includes packages such as I-installer, Terminal Tutor, and tool box."
-    },
+        "desc": "This is the full base release of the program. Remember: start with Terminal Tutor to begin the first lession.",
+        "link": "linux-Playground.zip"
+    }
 ]
