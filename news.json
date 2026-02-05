@@ -17,10 +17,10 @@
         "date": "2026-02-05",
         "body": "Check out Ventoy interactive."
     },
-       {
+    {
         "id": 4,
         "title": "Linux PLayground's official release!!",
         "date": "2026-02-04",
-        "body": "This is the full base release of Linux Playground. This includes packages such as I-installer, Terminal Tutor, and tool box. "
+        "body": "This is the full base release of Linux Playground. This includes packages such as I-installer, Terminal Tutor, and tool box."
     },
 ]
