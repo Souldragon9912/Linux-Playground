@@ -45,7 +45,7 @@
         .brand-banner {
             width: 100%;
             height: 140px;
-            background: url('Linux-playground.jpg') no-repeat center;
+            background: url('Linux-playground.png') no-repeat center;
             background-size: cover;
             border-bottom: 1px solid var(--glass-border);
             position: relative;
@@ -387,20 +387,31 @@ const app = (() => {
         ]
     };
 
-    const init = () => {
-        // Data Repair
-        let needsSave = false;
-        state.labs = state.labs.map((l, i) => { if(!l.id) { needsSave=true; return {...l, id: Date.now()+i}; } return l; });
-        state.news = state.news.map((n, i) => { if(!n.id) { needsSave=true; return {...n, id: Date.now()+i}; } return n; });
-        if(needsSave) {
-            localStorage.setItem('lp_labs', JSON.stringify(state.labs));
-            localStorage.setItem('lp_news', JSON.stringify(state.news));
-        }
+const init = () => {
+        // 1. LOAD LABS FROM FILE
+        fetch('labs.json')
+            .then(res => res.json())
+            .then(data => {
+                state.labs = data;
+                refresh();
+            })
+            .catch(() => console.log("Using default labs (File not found)"));
 
-        refresh();
+        // 2. LOAD NEWS FROM FILE
+        fetch('news.json')
+            .then(res => res.json())
+            .then(data => {
+                state.news = data;
+                refresh();
+            })
+            .catch(() => console.log("Using default news (File not found)"));
+
+        // 3. SETUP TERMINAL
         document.getElementById('cmd-input').addEventListener('keydown', e => {
             if(e.key === 'Enter') { runCmd(e.target.value); e.target.value = ''; }
         });
+        
+        refresh();
     };
 
     const nav = (id) => {
