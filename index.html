@@ -388,23 +388,37 @@ const app = (() => {
     };
 
 const init = () => {
-        // 1. LOAD LABS FROM FILE
-        fetch('labs.json')
-            .then(res => res.json())
+        // Add a timestamp to force the browser to get the NEWEST version
+        const v = Date.now();
+
+        // 1. LOAD LABS
+        console.log("Attempting to fetch labs.json...");
+        fetch(`labs.json?v=${v}`)
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP Error! Status: ${res.status}`);
+                return res.json();
+            })
             .then(data => {
+                console.log("Labs loaded successfully:", data);
                 state.labs = data;
                 refresh();
             })
-            .catch(() => console.log("Using default labs (File not found)"));
+            .catch(err => {
+                console.error("CRITICAL LABS ERROR:", err);
+                // If the error mentions 'JSON', it means the file exists but has a typo!
+            });
 
-        // 2. LOAD NEWS FROM FILE
-        fetch('news.json')
-            .then(res => res.json())
+        // 2. LOAD NEWS
+        fetch(`news.json?v=${v}`)
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP Error! Status: ${res.status}`);
+                return res.json();
+            })
             .then(data => {
                 state.news = data;
                 refresh();
             })
-            .catch(() => console.log("Using default news (File not found)"));
+            .catch(err => console.error("NEWS ERROR:", err));
 
         // 3. SETUP TERMINAL
         document.getElementById('cmd-input').addEventListener('keydown', e => {
