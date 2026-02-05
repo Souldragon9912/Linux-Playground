@@ -408,14 +408,15 @@ const init = () => {
                 // If the error mentions 'JSON', it means the file exists but has a typo!
             });
 
-        // 2. LOAD NEWS
+ // 2. LOAD NEWS
         fetch(`news.json?v=${v}`)
             .then(res => {
                 if (!res.ok) throw new Error(`HTTP Error! Status: ${res.status}`);
                 return res.json();
             })
             .then(data => {
-                state.news = data;
+                // ADD .reverse() HERE
+                state.news = data.reverse(); 
                 refresh();
             })
             .catch(err => console.error("NEWS ERROR:", err));
