@@ -1,0 +1,16 @@
+[
+    {
+        "id": 1,
+        "title": "Intro to Bash",
+        "date": "2026-05-10",
+        "desc": "Navigating the file system.",
+        "link": "#"
+    },
+    {
+        "id": 2,
+        "title": "Command Learning",
+        "date": "2026-02-04",
+        "desc": "Interactive Bash script lesson.",
+        "link": "system_playground.sh"
+    }
+]
